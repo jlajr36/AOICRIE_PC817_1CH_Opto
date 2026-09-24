@@ -18,6 +18,14 @@ screw_hole_depth = 4.0;
 // Side-to-side wire entry window width (for internal cage)
 cage_width = 3.0;
 
+/* [PCB Pins] */
+// Pin diameter
+pin_dia = 1.0;
+// Pin length below body
+pin_length = 4.0;
+// Pin position from the front/back edge
+pin_y = body_depth / 2;
+
 /* [Rendering Quality] */
 // Smoothness of circles
 $fn = 32;
@@ -54,11 +62,24 @@ module terminal_block(p, pt, h, d) {
             translate([x_pos - (cage_width / 2), (d / 2) - 1.5, h * 0.15])
             cube([cage_width, 3.0, h * 0.6]);
             
-            // 5. Interlocking Barrier/Divider slots (Optional aesthetic)
+            // 5. Interlocking Barrier/Divider slots
             if (i > 0) {
                 translate([i * pt - 0.4, -0.1, -0.1])
                 cube([0.8, d * 0.3, h * 0.8]);
             }
         }
+    }
+
+    // 6. PCB PINS UNDERNEATH
+    // One pin per terminal position
+    for (i = [0 : p - 1]) {
+        x_pos = (i * pt) + (pt / 2);
+
+        color("Silver")
+        translate([x_pos, pin_y, -pin_length])
+        cylinder(
+            d = pin_dia,
+            h = pin_length
+        );
     }
 }
